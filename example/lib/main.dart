@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:live_activities/live_activities.dart';
 import 'package:live_activities/models/live_activity_image.dart';
 import 'package:live_activities/models/url_scheme_data.dart';
+import 'package:live_activities_example/di_manager.dart';
 import 'package:live_activities_example/models/football_game_live_activity_model.dart';
 import 'package:live_activities_example/widgets/score_widget.dart';
 
@@ -38,21 +39,51 @@ class _HomeState extends State<Home> {
   final _liveActivitiesPlugin = LiveActivities();
   String? _latestActivityId;
   StreamSubscription<UrlSchemeData>? urlSchemeSubscription;
-  FootballGameLiveActivityModel? _footballGameLiveActivityModel;
+  MomentLiveActivityModel? _momentLiveActivityModel;
+  int currentTime = 0;
 
-  int teamAScore = 0;
-  int teamBScore = 0;
+  final DynamicIslandManager diManager = DynamicIslandManager(channelKey: 'DI');
 
-  String teamAName = 'PSG';
-  String teamBName = 'Chelsea';
+  final Stream timerStream = Stream.periodic(const Duration(seconds: 1));
+  StreamSubscription? timerStreamSubscriber;
+
+  bool paused = true; // Initially paused
+
+  void togglePaused(bool _paused) {
+    setState(() {
+      paused = _paused; // Toggle the paused state
+    });
+    diManager.methodOne(
+      jsonData: {
+        'paused': _paused,
+      },
+    );
+    _updateActivity(paused, currentTime);
+  }
 
   @override
   void initState() {
     super.initState();
+    diManager.startListening(
+      onPause: () {
+        togglePaused(true);
+      },
+      onPlay: () {
+        togglePaused(false);
+      },
+    );
+    timerStreamSubscriber = timerStream.listen((event) {
+      if (!paused) {
+        print('incrementing time');
+        setState(() {
+          currentTime += 1;
+        });
+        _updateActivity(paused, currentTime);
+      }
+    });
 
     _liveActivitiesPlugin.init(
-      appGroupId: 'group.dimitridessus.liveactivities',
-    );
+        appGroupId: 'group.dimitridessus.liveactivities', urlScheme: 'la');
 
     _liveActivitiesPlugin.activityUpdateStream.listen((event) {
       print('Activity update: $event');
@@ -61,24 +92,14 @@ class _HomeState extends State<Home> {
     urlSchemeSubscription =
         _liveActivitiesPlugin.urlSchemeStream().listen((schemeData) {
       setState(() {
-        if (schemeData.path == '/stats') {
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Stats 📊'),
-                content: Text(
-                  'Now playing final world cup between $teamAName and $teamBName\n\n$teamAName score: $teamAScore\n$teamBName score: $teamBScore',
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Close'),
-                  ),
-                ],
-              );
-            },
-          );
+        switch (schemeData.path) {
+          case '/pause':
+            paused = true;
+            togglePaused(true);
+            break;
+          case '/resume':
+            togglePaused(false);
+            break;
         }
       });
     });
@@ -87,12 +108,13 @@ class _HomeState extends State<Home> {
   @override
   void dispose() {
     urlSchemeSubscription?.cancel();
+    timerStreamSubscriber?.cancel();
     _liveActivitiesPlugin.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
+  StatefulWidget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -110,131 +132,75 @@ class _HomeState extends State<Home> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              if (_latestActivityId != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Card(
-                    child: SizedBox(
-                      width: double.infinity,
-                      height: 120,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ScoreWidget(
-                              score: teamAScore,
-                              teamName: teamAName,
-                              onScoreChanged: (score) {
-                                setState(() {
-                                  teamAScore = score < 0 ? 0 : score;
-                                });
-                                _updateScore();
-                              },
-                            ),
-                          ),
-                          Expanded(
-                            child: ScoreWidget(
-                              score: teamBScore,
-                              teamName: teamBName,
-                              onScoreChanged: (score) {
-                                setState(() {
-                                  teamBScore = score < 0 ? 0 : score;
-                                });
-                                _updateScore();
-                              },
-                            ),
-                          ),
-                        ],
+              // a line indicatting a timer that runs
+              Text(
+                'Timer: $currentTime',
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  print('start nap');
+                  togglePaused(false);
+                  _momentLiveActivityModel = MomentLiveActivityModel(
+                    sleepStartDate: DateTime.now(),
+                    suggestedSleepEndDate: DateTime.now().add(
+                      const Duration(
+                        minutes: 5,
                       ),
                     ),
-                  ),
-                ),
-              if (_latestActivityId == null)
-                TextButton(
-                  onPressed: () async {
-                    _footballGameLiveActivityModel =
-                        FootballGameLiveActivityModel(
-                      matchName: 'World cup ⚽️',
-                      teamAName: 'PSG',
-                      teamAState: 'Home',
-                      teamALogo: LiveActivityImageFromAsset(
-                        'assets/images/psg.png',
-                      ),
-                      teamBLogo: LiveActivityImageFromAsset(
-                        'assets/images/chelsea.png',
-                      ),
-                      teamBName: 'Chelsea',
-                      teamBState: 'Guest',
-                      matchStartDate: DateTime.now(),
-                      matchEndDate: DateTime.now().add(
-                        const Duration(
-                          minutes: 6,
-                          seconds: 30,
-                        ),
-                      ),
-                    );
+                    momentName: 'Nap time 😴',
+                    momentImage: LiveActivityImageFromAsset(
+                      'assets/images/psg.png',
+                    ),
+                    paused: paused,
+                    counter: currentTime,
+                  );
 
-                    final activityId =
-                        await _liveActivitiesPlugin.createActivity(
-                      _footballGameLiveActivityModel!.toMap(),
-                    );
-                    setState(() => _latestActivityId = activityId);
-                  },
-                  child: const Column(
-                    children: [
-                      Text('Start football match ⚽️'),
-                      Text(
-                        '(start a new live activity)',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
-                    ],
-                  ),
+                  final activityId = await _liveActivitiesPlugin.createActivity(
+                    _momentLiveActivityModel!.toMap(),
+                  );
+                  setState(() => _latestActivityId = activityId);
+                },
+                child: const Column(
+                  children: [
+                    Text('Start nap'),
+                  ],
                 ),
-              if (_latestActivityId == null)
-                TextButton(
-                  onPressed: () async {
-                    final supported =
-                        await _liveActivitiesPlugin.areActivitiesEnabled();
-                    if (context.mounted) {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            content: Text(
-                              supported ? 'Supported' : 'Not supported',
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.of(context).pop(),
-                                child: const Text('Close'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    }
-                  },
-                  child: const Text('Is live activities supported ? 🤔'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  togglePaused(false);
+                },
+                child: const Column(
+                  children: [
+                    Text('resume nap'),
+                  ],
                 ),
+              ),
+              TextButton(
+                onPressed: () async {
+                  togglePaused(true);
+                },
+                child: const Column(
+                  children: [
+                    Text('pause nap'),
+                  ],
+                ),
+              ),
+
               if (_latestActivityId != null)
                 TextButton(
                   onPressed: () {
                     _liveActivitiesPlugin.endAllActivities();
                     _latestActivityId = null;
-                    setState(() {});
+                    togglePaused(true);
                   },
                   child: const Column(
                     children: [
-                      Text('Stop match ✋'),
-                      Text(
-                        '(end all live activities)',
-                        style: TextStyle(
-                          fontSize: 10,
-                          fontStyle: FontStyle.italic,
-                        ),
-                      ),
+                      Text('Cancel Nap ✋'),
                     ],
                   ),
                 ),
@@ -245,15 +211,18 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Future _updateScore() async {
-    if (_footballGameLiveActivityModel == null) {
+  Future _updateActivity(bool paused, int counter) async {
+    if (_momentLiveActivityModel == null) {
       return;
     }
 
-    final data = _footballGameLiveActivityModel!.copyWith(
-      teamAScore: teamAScore,
-      teamBScore: teamBScore,
-      // teamAName: null,
+    final data = _momentLiveActivityModel!.copyWith(
+      sleepStartDate: _momentLiveActivityModel!.sleepStartDate,
+      suggestedSleepEndDate: _momentLiveActivityModel!.suggestedSleepEndDate,
+      momentName: _momentLiveActivityModel!.momentName,
+      momentImage: _momentLiveActivityModel!.momentImage,
+      paused: paused,
+      counter: counter,
     );
     return _liveActivitiesPlugin.updateActivity(
       _latestActivityId!,

@@ -17,10 +17,13 @@
 		27C0559028E42F5A00BA744B /* extension_example.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = 27C0558B28E42F5700BA744B /* extension_example.intentdefinition */; };
 		27C0559328E42F5A00BA744B /* extension-exampleExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 27C0558228E42F5700BA744B /* extension-exampleExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		689E6784261FA6BBB523C43C /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B63D21ED2B73BC2B00FB191B /* Pods_Runner.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		B63D21F52B75300F00FB191B /* ExampleIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63D21F42B75300F00FB191B /* ExampleIntent.swift */; };
+		B63D21F62B75303400FB191B /* ExampleIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = B63D21F42B75300F00FB191B /* ExampleIntent.swift */; };
 		C568C93B6C1E972884845268 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6C3FF4834BCE668908F85F7F /* Pods_Runner.framework */; };
 /* End PBXBuildFile section */
 
@@ -83,6 +86,8 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		B63D21ED2B73BC2B00FB191B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B63D21F42B75300F00FB191B /* ExampleIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleIntent.swift; sourceTree = "<group>"; };
 		D3E3F7EF4F0F5AC7087F4853 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		E193E32BE83891C525D596E9 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,6 +107,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C568C93B6C1E972884845268 /* Pods_Runner.framework in Frameworks */,
+				689E6784261FA6BBB523C43C /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +117,7 @@
 		27C0558328E42F5700BA744B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				B63D21ED2B73BC2B00FB191B /* Pods_Runner.framework */,
 				27C0558428E42F5700BA744B /* WidgetKit.framework */,
 				27C0558628E42F5700BA744B /* SwiftUI.framework */,
 				6C3FF4834BCE668908F85F7F /* Pods_Runner.framework */,
@@ -125,6 +132,7 @@
 				27C0558B28E42F5700BA744B /* extension_example.intentdefinition */,
 				27C0558C28E42F5A00BA744B /* Assets.xcassets */,
 				27C0558E28E42F5A00BA744B /* Info.plist */,
+				B63D21F42B75300F00FB191B /* ExampleIntent.swift */,
 			);
 			path = "extension-example";
 			sourceTree = "<group>";
@@ -260,6 +268,9 @@
 				Base,
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
+			packageReferences = (
+				B63D21EA2B73B85100FB191B /* XCRemoteSwiftPackageReference "FlutterSwift" */,
+			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -372,6 +383,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				27C0558A28E42F5700BA744B /* extension_example.swift in Sources */,
+				B63D21F62B75303400FB191B /* ExampleIntent.swift in Sources */,
 				27C0558F28E42F5A00BA744B /* extension_example.intentdefinition in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -380,6 +392,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B63D21F52B75300F00FB191B /* ExampleIntent.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				27C0559028E42F5A00BA744B /* extension_example.intentdefinition in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
@@ -475,9 +488,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = C6D6DBHW5C;
+				DEVELOPMENT_TEAM = 6L48Q5Z49W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -720,9 +734,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = C6D6DBHW5C;
+				DEVELOPMENT_TEAM = 6L48Q5Z49W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -745,9 +760,10 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = C6D6DBHW5C;
+				DEVELOPMENT_TEAM = 6L48Q5Z49W;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -794,6 +810,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B63D21EA2B73B85100FB191B /* XCRemoteSwiftPackageReference "FlutterSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/PADL/FlutterSwift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 97C146E61CF9000F007C117D /* Project object */;
 }
